@@ -1,0 +1,26 @@
+services:
+  users-database:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ff-users
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - users_data:/var/lib/postgresql/data # "users_data" is the name of the volume
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+    - 1234:8080
+
+volumes:
+  users_data: # this is the name of the volume
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './users-database/data'
