@@ -1,28 +1,17 @@
 import {
-  ClientMySQL,
   ClientPostgreSQL,
-  ClientSQLite,
   NessieConfig,
+  // @ts-ignore
 } from "https://deno.land/x/nessie@2.0.10/mod.ts";
 
 /** Select one of the supported clients */
 const client = new ClientPostgreSQL({
-  database: "nessie",
+  database: "ff-users",
   hostname: "localhost",
-  port: 5432,
-  user: "root",
-  password: "pwd",
+  port: 1010,
+  user: "admin",
+  password: "admin",
 });
-
-// const client = new ClientMySQL({
-//     hostname: "localhost",
-//     port: 3306,
-//     username: "root",
-//     // password: "pwd", // uncomment this line for <8
-//     db: "nessie",
-// });
-
-// const client = new ClientSQLite("./sqlite.db");
 
 /** This is the final config object */
 const config: NessieConfig = {
