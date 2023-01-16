@@ -9,12 +9,25 @@ export default class extends AbstractMigration<ClientPostgreSQL> {
   /** Runs on migrate */
   async up(info: Info): Promise<void> {
     //@ts-ignore
-    await this.client.queryArray("CREATE TABLE users (id int)");
+    await this.client.queryArray(
+      `
+        CREATE TABLE
+          users
+        (
+          id SERIAL PRIMARY KEY,
+          firebase_id VARCHAR(255) NOT NULL
+        );
+      `
+    );
   }
 
   /** Runs on rollback */
   async down(info: Info): Promise<void> {
     //@ts-ignore
-    await this.client.queryArray("DROP TABLE users");
+    await this.client.queryArray(
+      `
+        DROP TABLE users
+      `
+    );
   }
 }
