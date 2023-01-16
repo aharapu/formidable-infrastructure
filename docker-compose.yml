@@ -1,36 +1,17 @@
 services:
   users-database:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_DB: ff-users
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-    volumes:
-      - ./users-database/data:/var/lib/postgresql/data
+    image: ff/users-database
+    build:
+      context: ./users-database
+      dockerfile: Dockerfile
     ports:
       - 1010:5432
-
-# non-Dockerfile approach
-  # users-database-migration-service:
-    # image: denoland/deno:ubuntu-1.29.3
-    # restart: always
-    # depends_on:
-    #   - users-database
-    # volumes:
-    #   - ./users-database-migration-service:/app
-    # working_dir: /app
-    # # command to install nessie cli
-    # command: [
-    #   "deno install --unstable --allow-net=localhost:1010 --allow-read=. --allow-write=nessie.config.ts,db -f  https://deno.land/x/nessie/cli.ts",
-    #   "nessie migrate",
-    #   "tail -F anything"
-    # ]
-    # ports:
-    #   - 1020:1020
-
+    restart: always
   users-database-migration-service:
     image: ff/users-database-migration-service
     build:
       context: ./users-database-migration-service
       dockerfile: Dockerfile
+    depends_on:
+      - users-database
+        # TODO -> add "condition: service_healthy" after healthcheck is implemented

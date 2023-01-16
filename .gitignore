@@ -2,7 +2,7 @@
 users-database/data
 
 #DENO
-DENO_DIR
+/DENO_DIR
 
 # Logs
 logs

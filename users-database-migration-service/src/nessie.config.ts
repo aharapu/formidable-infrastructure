@@ -7,8 +7,8 @@ import {
 /** Select one of the supported clients */
 const client = new ClientPostgreSQL({
   database: "ff-users",
-  hostname: "localhost",
-  port: 1010,
+  hostname: "users-database",
+  port: 5432,
   user: "admin",
   password: "admin",
 });
