@@ -7,6 +7,7 @@ import {
 // TODO -> use env variables to set the database connection
 const client = new ClientPostgreSQL({
   database: "ff-users",
+  // host and port are the ones assigned by docker-compose to the postgres container
   hostname: "users-database",
   port: 5432,
   user: "admin",

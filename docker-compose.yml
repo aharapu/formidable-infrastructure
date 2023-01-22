@@ -7,6 +7,7 @@ services:
     ports:
       - 1010:5432
     restart: always
+
   users-database-migration-service:
     image: ff/users-database-migration-service
     build:
@@ -15,3 +16,15 @@ services:
     depends_on:
       - users-database
         # TODO -> add "condition: service_healthy" after healthcheck is implemented
+
+
+  form-data-api:
+    image: ff/form-data-api
+    build:
+      context: ./form-data-api
+      dockerfile: Dockerfile
+    depends_on:
+      - users-database
+    ports:
+      - 1030:80
+    restart: always
