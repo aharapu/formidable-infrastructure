@@ -1,13 +1,9 @@
 // TODO -> add CORS
-import { Client } from "https://deno.land/x/postgres@v0.17.0/mod.ts";
 
-import { Application, Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
+import { googleAuthLib, Application, Router, Client } from "./deps.ts";
 
 // TODO -> move google auth stuff to own file
-import googleAuthLib from "npm:google-auth-library";
-
 const { OAuth2Client } = googleAuthLib;
-
 const CLIENT_ID = Deno.env.get("GOOGLE_OAUTH_CLIENT_ID");
 const client = new OAuth2Client(CLIENT_ID);
 
