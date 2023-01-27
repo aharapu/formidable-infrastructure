@@ -20,6 +20,8 @@ services:
 
   form-data-api:
     image: ff/form-data-api
+    env_file:
+      - ./form-data-api/.env
     build:
       context: ./form-data-api
       dockerfile: Dockerfile
