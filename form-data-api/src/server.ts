@@ -2,6 +2,12 @@
 
 import { googleAuthLib, Application, Router, Client } from "./deps.ts";
 
+import {
+  extractJwtData,
+  getGoogleJWTokenKeys,
+  isValidJwtTokenSignature,
+} from "./auth/jwt.ts";
+
 // TODO -> move google auth stuff to own file
 const { OAuth2Client } = googleAuthLib;
 const CLIENT_ID = Deno.env.get("GOOGLE_OAUTH_CLIENT_ID");
@@ -25,10 +31,12 @@ async function verifyGoogleToken(token) {
   return payload;
 }
 
+// TODO -> add a logger middleware
 const router = new Router();
 
 router
   .get("/", (context) => {
+    console.log("serving hello world");
     context.response.body = "Hello world!";
   })
   .get("/users", async (context) => {
@@ -58,16 +66,41 @@ router
     console.log("token", token);
     const payload = await verifyGoogleToken(token);
 
-    // TODO -> set response headers?
     context.response.headers.set("Content-Type", "application/json");
     context.response.body = payload;
+  })
+  .post("/v2/singIn/withGoogleToken", async (context) => {
+    // TODO -> move this to a middleware
+    const headers = context.request.headers;
+    const authorization = headers.get("Authorization");
+    const token = authorization?.split("Bearer ")[1];
+
+    const keys = await getGoogleJWTokenKeys();
+
+    const [header, payload] = extractJwtData(token);
+
+    // TODO -> verify issuer
+    // TODO -> veryfiy audience
+    // TODO -> verify expiration
+
+    const googleJwtKeyId = header?.kid;
+    if (!googleJwtKeyId) {
+      throw new Error("Key id not found");
+    }
+
+    const criptoKey = keys[googleJwtKeyId];
+    if (!criptoKey) {
+      throw new Error("Key not found");
+    }
+
+    const success = await isValidJwtTokenSignature(token, criptoKey);
+    if (!success) {
+      throw new Error("Invalid token signature");
+    }
+
+    context.response.headers.set("Content-Type", "application/json");
+    context.response.body = { success };
   });
-// example of a route with a parameter
-// .get("/book/:id", (context) => {
-//   if (books.has(context?.params?.id)) {
-//     context.response.body = books.get(context.params.id);
-//   }
-// });
 
 const app = new Application();
 app.use(router.routes());
